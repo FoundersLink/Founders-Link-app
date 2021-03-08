@@ -14,10 +14,11 @@ export default async function makeDb() {
     if (environment === "production") {
         // Use this url when in production
         // url = `mongodb+srv://${config.username}:${config.password}@${config.host}/${config.database}?retryWrites=true&w=majority`;
+        url = `mongodb+srv://${config.username}:${config.password}@${config.host}/${config.database}?retryWrites=true&w=majority`;
+
     } else {
         // Use this url locally
-        // url = `mongodb://localhost:27017`;
-         url = `mongodb+srv://${config.username}:${config.password}@${config.host}/${config.database}?retryWrites=true&w=majority`;
+        url = `mongodb://localhost:27017`;
     }
 
     mongoose.connect(url, {
