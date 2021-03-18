@@ -29,6 +29,70 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    username: {
+            type: String,
+            lowercase: true,
+            unique: true,
+            trim: true,
+            required: true,
+    },
+    about: {
+            type: String,
+            trim: true,
+            required: true,
+            validate(value) {
+                if (!value.length > 2) {
+                    throw new Error('Description is required')
+                }
+            }
+    },
+    userTitle: {
+        type: String,
+        trim: true,
+        required: true,
+        validate(value) {
+            if (!value.length > 2) {
+                throw new Error('Title is required')
+            }
+        }
+    },
+    followers: [
+
+    ],
+    recpoints: {
+            type: Integer,
+            required: true,
+    },
+    profileImage: {
+        type: String,
+        trim: true,
+        required: true,
+    },
+    connections: [{
+
+
+    }],
+    projects: [{
+
+
+    }],
+    Groups: [{
+
+
+    }],
+    usersPrefrence: [
+        {
+            tags: [
+
+            ],
+            interests: [
+
+            ],
+            resources: [
+
+            ],
+
+    ],
     phoneNumber: {
         type: String,
         trim: true,
@@ -118,7 +182,7 @@ userSchema.pre('save', async function (next) {
 })
 
 
-// Delete user and audioFiles 
+// Delete user and audioFiles
 userSchema.pre('remove', async function (next) {
     const user = this;
     await AudioModule.deleteMany({ admin: user._id });
@@ -127,4 +191,4 @@ userSchema.pre('remove', async function (next) {
 
 const User = mongoose.model("users", userSchema);
 
-export default User; 
+export default User;
