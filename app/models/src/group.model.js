@@ -1,7 +1,6 @@
 "use strict"
 import mongoose from 'mongoose';
 import validator from 'validator';
-import jwt from 'jsonwebtoken';
 
 const groupSchema = new mongoose.Schema({
 
@@ -31,8 +30,13 @@ const groupSchema = new mongoose.Schema({
         }
     },
     users: [
-
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+        }
     ],
+},
     {
         timestamps: true
     }

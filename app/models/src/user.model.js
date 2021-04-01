@@ -56,9 +56,6 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    followers: [
-
-    ],
     recpoints: {
             type: Integer,
             required: true,
@@ -68,30 +65,56 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: true,
     },
-    connections: [{
-
-
-    }],
-    projects: [{
-
-
-    }],
-    Groups: [{
-
-
-    }],
+    following: [
+        { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "users",
+        required: true 
+        }
+    ],
+    followers: [
+        { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+        }
+    ],
+    companies: [
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "companies",
+        required: true
+        }
+    ],
+    Groups: [
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "groups",
+        }
+    ],
     usersPrefrence: [
         {
             tags: [
-
+                {
+                type: String,
+                trim: true
+                }
             ],
             interests: [
+                {
+                type: String,
+                trim: true   
+                }
 
             ],
             resources: [
+                {
+                type: String,
+                trim: true   
+                }
 
             ],
-
+        }
     ],
     phoneNumber: {
         type: String,

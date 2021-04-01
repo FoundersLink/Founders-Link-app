@@ -21,19 +21,32 @@ const companySchema = new mongoose.Schema({
         }
     },
     foundingMembers: [
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+        }
 
     ],
     tags: [
-
+        {
+        type: String,
+        trim: true
+        }
     ],
     interests: [
+        {
+        type: String,
+        trim: true
+        }
 
     ],
+},
     {
         timestamps: true
     }
 );
 
-const Company = mongoose.model("companies", groupSchema);
+const Company = mongoose.model("companies", companySchema);
 
 export default Company;
