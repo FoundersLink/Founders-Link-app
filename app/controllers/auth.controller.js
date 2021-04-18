@@ -29,7 +29,6 @@ export default class AuthController {
             const token = await user.generateToken();
             return res.status(200).send({ status: 200, user, token });
         } catch (e) {
-            console.log(e);
             return res.status(400).send(makeHttpError({ error: e.message }));
         }
 
@@ -56,7 +55,9 @@ export default class AuthController {
                 return res.status(400).send(makeHttpError({
                     error: errors
                 }))
-            }
+            };
+            // send verification email
+            // verify the email
 
             const user = await new User(data).save();
             const token = await user.generateToken();
