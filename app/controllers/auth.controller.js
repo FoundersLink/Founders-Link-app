@@ -2,6 +2,7 @@ import adaptRequest from '../helpers/adaptRequest';
 import { makeHttpError } from '../helpers/httpHelper';
 import Helper from '../helpers/helper';
 import User from '../models/src/user.model';
+import mailer from '../helpers/send.email';
 
 
 export default class AuthController {
@@ -61,6 +62,9 @@ export default class AuthController {
 
             const user = await new User(data).save();
             const token = await user.generateToken();
+
+            const emailView = mailer.activateAccountView(token, user.firstName);
+            mailer.sendEmail(email, 'Verification link', emailView);
             return res.status(201).send({ user, token });
         } catch (e) {
             return res.status(400).send(makeHttpError({
@@ -69,6 +73,19 @@ export default class AuthController {
             }))
         }
     }
+
+    static async activateUser(req, res) {
+        const activate = {
+          isVerified: true,
+        };
+        const updateUser = await User.update(req.user.email, activate);
+    
+        if (updateUser.status === 200) {
+          return res.redirect(`${process.env.FRONT_END_SUCCESS_REDIRECT}`);
+        }
+    
+        return res.status(200).send(updateUser.message);
+      }
 
     static async logout(req, res) {
         /// Log out from current session
