@@ -4,9 +4,17 @@ import Helper from '../helpers/helper';
 import User from '../models/src/user.model';
 import mailer from '../helpers/send.email';
 
-
+/**
+ * Auth controller
+ * every functionality regarding authentication
+ */
 export default class AuthController {
 
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user logged in token
+	 */
     static async login(req, res) {
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
@@ -35,12 +43,17 @@ export default class AuthController {
 
     }
 
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user can create account
+	 */
+
     static async createNewUser(req, res) {
-        /// Add a new user
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
         const data = Helper.requestBody(body);
-        const { errors, isValid } = Helper.validateLoginInput(body);
+        const { errors, isValid } = Helper.validateSignUpInput(body);
         const checkUser = await User.findOne({ email: body.email });
 
         try {
@@ -57,8 +70,6 @@ export default class AuthController {
                     error: errors
                 }))
             };
-            // send verification email
-            // verify the email
 
             const user = await new User(data).save();
             const token = await user.generateToken();
@@ -74,6 +85,12 @@ export default class AuthController {
         }
     }
 
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user is activated
+	 */
+
     static async activateUser(req, res) {
         const activate = {
           isVerified: true,
@@ -86,6 +103,12 @@ export default class AuthController {
     
         return res.status(200).send(updateUser.message);
       }
+    
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user logged out successfully
+	 */
 
     static async logout(req, res) {
         /// Log out from current session

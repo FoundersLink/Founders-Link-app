@@ -50,6 +50,36 @@ class Helper {
             isValid: Helper.isEmpty(errors) // this return true or false exist.
         }
     }
+    static validateSignUpInput(data) {
+        let errors = {};        
+        data.email = !Helper.isEmpty(data.email) ? data.email : '';
+        data.password = !Helper.isEmpty(data.password) ? data.password : '';
+
+        if (Validator.isEmpty(data.firstName)) {
+            errors.email = 'First Name is required';
+        }
+
+        if (Validator.isEmpty(data.lastName)) {
+            errors.email = 'Last Name is required';
+        }
+
+        if (!Validator.isEmail(data.email)) {
+            errors.email = 'Email is invalid';
+        }
+
+        if (Validator.isEmpty(data.email)) {
+            errors.email = 'Email field is required';
+        }
+
+        if (Validator.isEmpty(data.password)) {
+            errors.password = 'Password field is required';
+        }
+
+        return {
+            errors,
+            isValid: Helper.isEmpty(errors) // this return true or false exist.
+        }
+    }
 
     static isEmpty(value) {
         return value === undefined || value == null ||
