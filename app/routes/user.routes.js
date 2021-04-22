@@ -12,6 +12,6 @@ router.post('/logoutall', authGuard, authController.logoutAll);
 router.get('/profile', authGuard, userController.getUser);
 router.patch('/profile', authGuard, userController.updateUser);
 router.delete('/profile', authGuard, userController.deleteUserAccount);
-router.get('/activate/:autorizations', verifyToken.paramToken, authController.activateUser);
+router.get('/activate/:autorizations', authController.activateUser);
 
 export default router;

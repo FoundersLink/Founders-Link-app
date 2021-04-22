@@ -2,7 +2,7 @@ import adaptRequest from '../helpers/adaptRequest';
 import { makeHttpError } from '../helpers/httpHelper';
 import Helper from '../helpers/helper';
 import User from '../models/src/user.model';
-import mailer from '../helpers/send.email';
+import mailer from '../helpers/mailer';
 
 /**
  * Auth controller
