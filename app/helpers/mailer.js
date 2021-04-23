@@ -110,7 +110,7 @@ class mailer {
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
             <!-- LOGO -->
             <tr>
-                <td bgcolor="#2ED47A" align="center">
+                <td bgcolor="#9EBBF3" align="center">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                         <tr>
                             <td align="center" valign="top" style="padding: 40px 10px 40px 10px;"> </td>
@@ -152,16 +152,6 @@ class mailer {
                                 </table>
                             </td>
                         </tr> <!-- COPY -->
-                        <tr>
-                            <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                <p style="margin: 0;">If that doesn't work, copy and paste the following link in your browser:</p>
-                            </td>
-                        </tr> <!-- COPY -->
-                        <tr>
-                            <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                <p style="margin: 0;"><a href="#" target="_blank" style="color: #5CE0E6;">${process.env.BASE_URL}/user/activate/${token}</a></p>
-                            </td>
-                        </tr>
                         <tr>
                             <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
                                 <p style="margin: 0;">If you have any questions, just reply to this email—we're always happy to help out.</p>
