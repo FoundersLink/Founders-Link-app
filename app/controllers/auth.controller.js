@@ -93,16 +93,20 @@ export default class AuthController {
 	 */
 
     static async activateUser(req, res) {
-        const activate = {
-          isVerified: true,
-        };
-        const updateUser = await User.update(req.user.email, activate);
+        const updateUser = await User.findByIdAndUpdate(
+            req.user.id, {
+              $set: {
+                isVerified: true
+              }
+            }, {
+              new: true
+            }
+          );
     
         if (updateUser.status === 200) {
           return res.redirect(`${process.env.FRONT_END_SUCCESS_REDIRECT}`);
         }
-    
-        return res.status(200).send(updateUser.message);
+        return res.status(400).send(updateUser.message);
       }
     
     /**
