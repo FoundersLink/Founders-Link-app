@@ -73,7 +73,6 @@ export default class AuthController {
 
             const user = await new User(data).save();
             const token = await user.generateToken();
-            console.log(user, token);
 
             const emailView = mailer.activateAccountView(token, user.firstName);
             mailer.sendEmail(body.email, 'Verification link', emailView);
