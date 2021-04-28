@@ -33,7 +33,10 @@ export default class AuthController {
                 errors.email = "No such account";
                 return res.status(400).send(makeHttpError({ error: errors }))
             }
-
+            
+            if(!checkUser.isVerified){
+                return res.status(400).send(makeHttpError({ error: 'account not verified' }))
+            }
             const user = await User.findUserByCredentials(credentials.email, credentials.password)
             const token = await user.generateToken();
             return res.status(200).send({ status: 200, user, token });
@@ -105,7 +108,7 @@ export default class AuthController {
         if (updateUser.status === 200) {
           return res.redirect(`${process.env.FRONT_END_SUCCESS_REDIRECT}`);
         }
-        return res.status(400).send(updateUser.message);
+        return res.status(updateUser.status).send(updateUser.message);
       }
     
     /**

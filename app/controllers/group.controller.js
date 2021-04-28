@@ -18,7 +18,7 @@ import Group from '../models/src/group.model';
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
         const data = Helper.requestBody(body);
-        const { errors, isValid } = Helper.validateSignUpInput(body);
+        const { errors, isValid } = Helper.validateGroupInput(body);
         try {
 
             if (!isValid) {
@@ -49,11 +49,11 @@ import Group from '../models/src/group.model';
         const { id } = httpRequest.pathParams || {}
 
         try {
-            const module = await Group.findOne({ _id: id });
-            if (!module) {
-                return res.status(404).send(makeHttpError({ error: 'Action not allowed' }));
+            const group = await Group.findOne({ _id: id });
+            if (!group) {
+                return res.status(404).send(makeHttpError({ error: 'group not found' }));
             }
-            return res.status(200).send(module);
+            return res.status(200).send(group.users);
         } catch (e) {
             return res.status(500).send(makeHttpError({ error: 'Internal issue' }))
         }
@@ -66,17 +66,19 @@ import Group from '../models/src/group.model';
 	 * @returns {object} create a group
 	 */
      static async addPeopleToGroup(req, res){
-        const updateGroup = await Group.findByIdAndUpdate(
-            req.group.id, {
-              $set: {
-                isVerified: true
-              }
-            }, {
-              new: true
-            }
-          );
-    
-        return res.status(400).send(updateGroup.message);
+      Group.findOne({ _id: req.params.id })
+      .then((group) => {
+        if (!group)
+          return res.status(400).json({
+            message: `The group id ${req.params.id} is not associated with any group. Double-check the id and try again.`,
+          });
+  
+        // Login successful, write token, and send back user
+        group.users.unshift(req.body.user_id);
+        group.save();
+        res.status(200).json({ group });
+      })
+      .catch((err) => res.status(500).json({ message: err.message }));
     }
 
     /**
@@ -85,18 +87,21 @@ import Group from '../models/src/group.model';
 	 * @returns {object} create a group
 	 */
      static async deletePeopleFromGroup(req, res){
-        const updateGroup = await Group.findByIdAndUpdate(
-            req.group.id, {
-              $set: {
-                isVerified: true
-              }
-            }, {
-              new: true
-            }
-          );
-    
-        return res.status(400).send(updateGroup.message);
-
+      Group.findOne({ _id: req.params.id })
+      .then((group) => {
+        if (!group)
+          return res.status(400).json({
+            message: `The group id ${req.params.id} is not associated with any group. Double-check the id and try again.`,
+          });
+  
+        // Login successful, write token, and send back user
+        group.users.filter(function(user){ 
+          return user != req.body.id; 
+        });
+        group.save();
+        res.status(200).json({ token: user.generateJWT(), user: user });
+      })
+      .catch((err) => res.status(500).json({ message: err.message }));
     }
 
  }

@@ -19,7 +19,7 @@ export default class LobbyController {
         const APP_ID = process.env.APP_ID;
         const APP_CERTIFICATE = process.env.APP_CERTIFICATE;
 
-        const channelName = req.query.channelName;
+        const channelName = 'test';
         if (!channelName) {
             return resp.status(500).json({ 'error': 'channel is required' });
         }
@@ -49,7 +49,7 @@ export default class LobbyController {
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
         const data = Helper.requestBody(body);
-        const { errors, isValid } = Helper.validateSignUpInput(body);
+        const { errors, isValid } = Helper.validateLobbyInput(body);
         try {
 
             if (!isValid) {
@@ -68,13 +68,6 @@ export default class LobbyController {
         }
     }
 
-    static async nocache(req, resp, next) {
-        resp.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-        resp.header('Expires', '-1');
-        resp.header('Pragma', 'no-cache');
-        next();
-    }
-
     /**
     * @param {object} req
     * @param {object} res
@@ -85,11 +78,11 @@ export default class LobbyController {
         const { id } = httpRequest.pathParams || {}
 
         try {
-            const module = await Lobby.find({ _id: id });
-            if (!module) {
-                return res.status(404).send(makeHttpError({ error: 'Action not allowed' }));
+            const lobby = await Lobby.findOne({ _id: id });
+            if (!lobby) {
+                return res.status(404).send(makeHttpError({ error: 'lobby not found' }));
             }
-            return res.status(200).send(module);
+            return res.status(200).send(lobby);
         } catch (e) {
             return res.status(500).send(makeHttpError({ error: 'Internal issue' }))
         }

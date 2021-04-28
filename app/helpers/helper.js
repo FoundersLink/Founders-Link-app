@@ -81,11 +81,12 @@ class Helper {
         }
     }
 
-    static validateCreateGroupInput(data) {
+    static validateGroupInput(data) {
         let errors = {};    
     }
 
-    static validateCreateLobbyInput(data) {
+
+    static validateLobbyInput(data) {
         let errors = {};    
     }
 

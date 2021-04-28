@@ -5,7 +5,7 @@ require('dotenv').config();
 // console.log('this is the environment: ', environment);
 
 export default async function makeDb() {
-    const connUri = process.env.MONGO_PROD_CONN_URL;
+    const connUri = process.env.DATABASE_URL;
     mongoose.promise = global.Promise;
     mongoose.connect(connUri, {
         useNewUrlParser: true,
