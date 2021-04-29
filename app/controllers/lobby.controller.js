@@ -20,35 +20,28 @@ export default class LobbyController {
         const APP_CERTIFICATE = process.env.APP_CERTIFICATE;
 
         const channelName = 'test';
-        if (!channelName) {
-            return resp.status(500).json({ 'error': 'channel is required' });
-        }
-        // get uid 
         let uid = req.query.uid;
         if (!uid || uid == '') {
             uid = 0;
         }
-        // get role
         let role = RtcRole.SUBSCRIBER;
         if (req.query.role == 'publisher') {
             role = RtcRole.PUBLISHER;
         }
-        // get the expire time
         let expireTime = req.query.expireTime;
         if (!expireTime || expireTime == '') {
             expireTime = 3600;
         } else {
             expireTime = parseInt(expireTime, 10);
         }
-        // calculate privilege expire time
         const currentTime = Math.floor(Date.now() / 1000);
         const privilegeExpireTime = currentTime + expireTime;
-        // build the token
         const token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
 
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
-        const data = Helper.requestBody(body);
+        let data = Helper.requestBody(body);
+        data.liveAudioLink = token;
         const { errors, isValid } = Helper.validateLobbyInput(body);
         try {
 

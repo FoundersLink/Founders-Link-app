@@ -6,10 +6,10 @@ import lobbyRoute from './lobby.route';
 import groupRoute from './group.route';
 
 const routes = Router();
-routes.use('/data', dataRoutes) 
+routes.use('/user', userRoute) 
 routes.use(audioRoute);
-routes.use(lobbyRoute);
-routes.use(groupRoute);
+routes.use('/lobby', lobbyRoute);
+routes.use('/group', groupRoute);
 
 export default routes;
 

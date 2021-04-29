@@ -5,8 +5,8 @@ const express = require("express");
 const router = express.Router();
 
 router.post('/create-group', authGuard, groupController.createGroup);
-router.post('/get-members', authGuard, groupController.getGroupMembers);
+router.get('/get-members', authGuard, groupController.getGroupMembers);
 router.post('/add-people', authGuard, groupController.addPeopleToGroup);
-router.post('/delete-people', authGuard, groupController.deletePeopleFromGroup);
+router.patch('/delete-people', authGuard, groupController.deletePeopleFromGroup);
 
 export default router;

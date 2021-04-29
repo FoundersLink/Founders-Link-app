@@ -2,6 +2,7 @@ import adaptRequest from '../helpers/adaptRequest';
 import { makeHttpError } from '../helpers/httpHelper';
 import Helper from '../helpers/helper';
 import Group from '../models/src/group.model';
+import User from '../models/src/user.model';
 
 /**
  * Group Controller
@@ -18,6 +19,7 @@ import Group from '../models/src/group.model';
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
         const data = Helper.requestBody(body);
+        data.groupOwner = req.user._id;
         const { errors, isValid } = Helper.validateGroupInput(body);
         try {
 
@@ -53,7 +55,13 @@ import Group from '../models/src/group.model';
             if (!group) {
                 return res.status(404).send(makeHttpError({ error: 'group not found' }));
             }
-            return res.status(200).send(group.users);
+            const groupMembers = group.users.map( index => {
+              const member = User.findOne({ _id : group.users[index]})
+              return member;
+            }
+
+            )
+            return res.status(200).send(groupMembers);
         } catch (e) {
             return res.status(500).send(makeHttpError({ error: 'Internal issue' }))
         }
@@ -99,7 +107,7 @@ import Group from '../models/src/group.model';
           return user != req.body.id; 
         });
         group.save();
-        res.status(200).json({ token: user.generateJWT(), user: user });
+        res.status(200).json({ group });
       })
       .catch((err) => res.status(500).json({ message: err.message }));
     }
