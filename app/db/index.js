@@ -1,38 +1,26 @@
 import mongoose from 'mongoose';
 require('dotenv').config();
 
-const environment = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
+// const environment = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 // console.log('this is the environment: ', environment);
 
 export default async function makeDb() {
-    const config = {}
-    let url;
-    config.database = process.env.DB_NAME ? process.env.DB_NAME : 'test';
-    config.username = process.env.DB_USER;
-    config.password = process.env.DB_PASS;
-    config.host = process.env.DB_HOST;
-    if (environment === "production") {
-        // Use this url when in production
-        // url = `mongodb+srv://${config.username}:${config.password}@${config.host}/${config.database}?retryWrites=true&w=majority`;
-        url = `mongodb+srv://${config.username}:${config.password}@${config.host}/${config.database}?retryWrites=true&w=majority`;
-
-    } else {
-        // Use this url locally
-        url = `mongodb://localhost:27017`;
-    }
-
-    mongoose.connect(url, {
+    const connUri = process.env.MONGO_PROD_CONN_URL;
+    mongoose.promise = global.Promise;
+    mongoose.connect(connUri, {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
         useCreateIndex: true,
-        useFindAndModify: false
-    })
-        .then(
-            () => console.log(".... Connected ...."))
-        .catch(error => {
-            console.log("Connections issues");
-            throw Error('Connections issues');
-        });
+        useUnifiedTopology: true,
+    });
 
-    mongoose.Promise = global.Promise
+    const connection = mongoose.connection;
+    connection.once("open", () =>
+        console.log("MongoDB --  database connection established successfully!")
+    );
+    connection.on("error", (err) => {
+        console.log(
+            `MongoDB connection error. Please make sure MongoDB is running. Err: ${err}`
+        );
+        process.exit();
+    });
 }

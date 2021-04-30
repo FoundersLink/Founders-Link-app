@@ -2,10 +2,20 @@ import adaptRequest from '../helpers/adaptRequest';
 import { makeHttpError } from '../helpers/httpHelper';
 import Helper from '../helpers/helper';
 import User from '../models/src/user.model';
+import mailer from '../helpers/mailer';
+import jwt from "jsonwebtoken";
 
-
+/**
+ * Auth controller
+ * every functionality regarding authentication
+ */
 export default class AuthController {
 
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user logged in token
+	 */
     static async login(req, res) {
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
@@ -24,23 +34,30 @@ export default class AuthController {
                 errors.email = "No such account";
                 return res.status(400).send(makeHttpError({ error: errors }))
             }
-
+            
+            if(!checkUser.isVerified){
+                return res.status(400).send(makeHttpError({ error: 'account not verified' }))
+            }
             const user = await User.findUserByCredentials(credentials.email, credentials.password)
             const token = await user.generateToken();
             return res.status(200).send({ status: 200, user, token });
         } catch (e) {
-            console.log(e);
             return res.status(400).send(makeHttpError({ error: e.message }));
         }
 
     }
 
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user can create account
+	 */
+
     static async createNewUser(req, res) {
-        /// Add a new user
         const httpRequest = adaptRequest(req);
         const { body } = httpRequest;
         const data = Helper.requestBody(body);
-        const { errors, isValid } = Helper.validateLoginInput(body);
+        const { errors, isValid } = Helper.validateSignUpInput(body);
         const checkUser = await User.findOne({ email: body.email });
 
         try {
@@ -56,10 +73,13 @@ export default class AuthController {
                 return res.status(400).send(makeHttpError({
                     error: errors
                 }))
-            }
+            };
 
             const user = await new User(data).save();
             const token = await user.generateToken();
+
+            const emailView = mailer.activateAccountView(token, user.firstName);
+            mailer.sendEmail(body.email, 'Verification link', emailView);
             return res.status(201).send({ user, token });
         } catch (e) {
             return res.status(400).send(makeHttpError({
@@ -68,6 +88,28 @@ export default class AuthController {
             }))
         }
     }
+
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user is activated
+	 */
+
+    static async activateUser(req, res) {
+        const decodedToken = jwt.verify(req.params.autorizations, 'livingCorporate2021');
+        await User.findOne(
+            {_id : decodedToken._id}).then((user)=>{
+                user.isVerified = true;
+                user.save();
+                return res.status(200).send({user});
+            });
+      }
+    
+    /**
+	 * @param {object} req
+	 * @param {object} res
+	 * @returns {object} user logged out successfully
+	 */
 
     static async logout(req, res) {
         /// Log out from current session
