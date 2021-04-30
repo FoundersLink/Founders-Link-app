@@ -91,9 +91,9 @@ class Helper {
             errors.description = 'Description is required';
         }
 
-        if (Validator.isEmpty(data.status)) {
-            errors.status = 'Status is required';
-        }
+        // if (Validator.isEmpty(data.status)) {
+        //     errors.status = 'Status is required';
+        // }
         return {
             errors,
             isValid: Helper.isEmpty(errors) // this return true or false exist.

@@ -3,6 +3,7 @@ import { makeHttpError } from '../helpers/httpHelper';
 import Helper from '../helpers/helper';
 import User from '../models/src/user.model';
 import mailer from '../helpers/mailer';
+import jwt from "jsonwebtoken";
 
 /**
  * Auth controller
@@ -95,20 +96,13 @@ export default class AuthController {
 	 */
 
     static async activateUser(req, res) {
-        const updateUser = await User.findByIdAndUpdate(
-            req.user.id, {
-              $set: {
-                isVerified: true
-              }
-            }, {
-              new: true
-            }
-          );
-    
-        if (updateUser.status === 200) {
-          return res.redirect(`${process.env.FRONT_END_SUCCESS_REDIRECT}`);
-        }
-        return res.status(updateUser.status).send(updateUser.message);
+        const decodedToken = jwt.verify(req.params.autorizations, 'livingCorporate2021');
+        await User.findOne(
+            {_id : decodedToken._id}).then((user)=>{
+                user.isVerified = true;
+                user.save();
+                return res.status(200).send({user});
+            });
       }
     
     /**

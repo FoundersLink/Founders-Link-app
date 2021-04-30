@@ -16,6 +16,9 @@ export default class LobbyController {
     * @returns {object} create a lobby with agora link
     */
     static async createLobby(req, res) {
+        const httpRequest = adaptRequest(req);
+        const { body } = httpRequest;
+        let data = Helper.requestBody(body);
         const APP_ID = process.env.APP_ID;
         const APP_CERTIFICATE = process.env.APP_CERTIFICATE;
 
@@ -37,11 +40,8 @@ export default class LobbyController {
         const currentTime = Math.floor(Date.now() / 1000);
         const privilegeExpireTime = currentTime + expireTime;
         const token = RtcTokenBuilder.buildTokenWithUid(APP_ID, APP_CERTIFICATE, channelName, uid, role, privilegeExpireTime);
-
-        const httpRequest = adaptRequest(req);
-        const { body } = httpRequest;
-        let data = Helper.requestBody(body);
         data.liveAudioLink = token;
+        console.log(data);
         const { errors, isValid } = Helper.validateLobbyInput(body);
         try {
 
@@ -75,7 +75,7 @@ export default class LobbyController {
             if (!lobby) {
                 return res.status(404).send(makeHttpError({ error: 'lobby not found' }));
             }
-            return res.status(200).send(lobby);
+            return res.status(200).send({ lobby });
         } catch (e) {
             return res.status(500).send(makeHttpError({ error: 'Internal issue' }))
         }
